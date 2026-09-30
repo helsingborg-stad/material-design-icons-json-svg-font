@@ -44,7 +44,7 @@ jobs:
         if: ${{ !inputs.retry_publish }}
         run: |
           git clone --depth 1 --filter=blob:none --sparse https://github.com/google/material-design-icons.git upstream
-          git -C upstream sparse-checkout set font variablefont
+          git -C upstream sparse-checkout set variablefont
           git -C upstream rev-parse HEAD > /tmp/material-icons-source-commit
 
       - name: Check whether source fonts changed
@@ -80,7 +80,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           version="$(python scripts/bump_version.py)"
           if [ "${{ steps.upstream.outputs.changed }}" = 'true' ] || [ "${{ steps.upstream.outputs.local_changed }}" = 'true' ]; then
-            git add -A package.json symbols.json variants.json weight.json metadata.json outlined rounded sharp filled rounded-filled sharp-filled two-tone fonts
+            git add -A
             if ! git diff --cached --quiet; then
               git commit -m "Release material icon package ($version)"
             fi

@@ -20,13 +20,12 @@ from fontTools.varLib.instancer import instantiateVariableFont
 WEIGHTS = (100, 200, 300, 400, 500, 600, 700)
 SYMBOL_STYLES = ("outlined", "rounded", "sharp")
 VARIANTS = (
-    ("outlined", "outlined", 0, "outlined"),
-    ("rounded", "rounded", 0, "rounded"),
-    ("sharp", "sharp", 0, "sharp"),
-    ("filled", "outlined", 1, "filled"),
-    ("rounded-filled", "rounded", 1, None),
-    ("sharp-filled", "sharp", 1, None),
-    ("two-tone", None, None, "two-tone"),
+    ("outlined", "outlined", 0),
+    ("rounded", "rounded", 0),
+    ("sharp", "sharp", 0),
+    ("filled", "outlined", 1),
+    ("rounded-filled", "rounded", 1),
+    ("sharp-filled", "sharp", 1),
 )
 SAFE_NAME = re.compile(r"^[a-z0-9_]+$")
 SOURCE_URL = "https://github.com/google/material-design-icons"
@@ -64,25 +63,14 @@ def icon_names(font: TTFont) -> dict[str, tuple[int, str]]:
     return dict(sorted(icons.items()))
 
 
-def find_fonts(upstream: Path) -> tuple[dict[str, Path], dict[str, Path]]:
+def find_fonts(upstream: Path) -> dict[str, Path]:
     symbols = {}
     for style in SYMBOL_STYLES:
         matches = list((upstream / "variablefont").glob(f"MaterialSymbols{style.title()}*.ttf"))
         if len(matches) != 1:
             raise ValueError(f"Expected one variable font for {style}, found {matches}")
         symbols[style] = matches[0]
-    classic_patterns = {
-        "outlined": "MaterialIconsOutlined-Regular.otf",
-        "rounded": "MaterialIconsRound-Regular.otf",
-        "sharp": "MaterialIconsSharp-Regular.otf",
-        "filled": "MaterialIcons-Regular.ttf",
-        "two-tone": "MaterialIconsTwoTone-Regular.otf",
-    }
-    classic = {style: upstream / "font" / name for style, name in classic_patterns.items()}
-    for path in classic.values():
-        if not path.is_file():
-            raise FileNotFoundError(path)
-    return symbols, classic
+    return symbols
 
 
 def axes(font: TTFont) -> dict[str, dict[str, float]]:
@@ -100,8 +88,8 @@ def axes(font: TTFont) -> dict[str, dict[str, float]]:
 
 def source_digest(upstream: Path) -> str:
     """Hash only the font binaries that determine the published assets."""
-    symbol_paths, classic_paths = find_fonts(upstream)
-    paths = set((*symbol_paths.values(), *classic_paths.values()))
+    symbol_paths = find_fonts(upstream)
+    paths = set(symbol_paths.values())
     paths.update(path.with_suffix(".woff2") for path in symbol_paths.values()
                  if path.with_suffix(".woff2").is_file())
     paths = sorted(paths)
@@ -117,34 +105,15 @@ def source_digest(upstream: Path) -> str:
 def svg(font: TTFont, glyph_name: str) -> str:
     units = font["head"].unitsPerEm
     glyph_set = font.getGlyphSet()
-    layers = (
-        font["COLR"].ColorLayers.get(glyph_name)
-        if "COLR" in font and font["COLR"].version == 0
-        else None
-    )
-    paths = []
-    for layer in layers or [None]:
-        layer_name = layer.name if layer else glyph_name
-        pen = SVGPathPen(glyph_set)
-        glyph_set[layer_name].draw(TransformPen(pen, (1, 0, 0, -1, 0, units)))
-        path = pen.getCommands()
-        if not path:
-            continue
-        attributes = ""
-        if layer:
-            color = font["CPAL"].palettes[0][layer.colorID]
-            if color.alpha < 255:
-                attributes = (
-                    f' opacity="{color.alpha / 255:.3f}"'
-                    ' style="fill:var(--icon-color-alt, var(--icon-color, currentColor))"'
-                )
-        paths.append(f'<path{attributes} d="{path}"/>')
-    if not paths:
+    pen = SVGPathPen(glyph_set)
+    glyph_set[glyph_name].draw(TransformPen(pen, (1, 0, 0, -1, 0, units)))
+    path = pen.getCommands()
+    if not path:
         raise ValueError(f"Glyph {glyph_name} has no outline")
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {units} {units}"'
         ' fill="currentColor" style="fill:var(--icon-color, currentColor)">'
-        + "".join(paths) + "</svg>\n"
+        f'<path d="{path}"/></svg>\n'
     )
 
 
@@ -180,12 +149,6 @@ def save_static_fonts(font: TTFont, directory: Path, stem: str) -> None:
     converted_path = directory / f"{stem}.{target_extension}"
     convert_with_fontforge(source, converted_path)
     converted = TTFont(converted_path)
-    # FontForge ignores color tables when converting the classic two-tone font.
-    # The layer glyph names survive, so reattach the original tables.
-    if "COLR" in font:
-        converted["CPAL"] = font["CPAL"]
-        converted["COLR"] = font["COLR"]
-        converted.save(converted_path)
     if set(icon_names(converted)) != set(icon_names(font)):
         raise ValueError(f"Font conversion changed the icon ligatures in {converted_path}")
     converted.close()
@@ -199,21 +162,19 @@ def choose_names(mapping: dict[str, tuple[int, str]], sample: int | None) -> dic
 def build(upstream: Path, output: Path, commit: str, sample: int | None, no_fonts: bool) -> None:
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise ValueError("--source-commit must be a full lowercase Git SHA")
-    symbol_paths, classic_paths = find_fonts(upstream)
+    symbol_paths = find_fonts(upstream)
     symbol_fonts = {style: TTFont(path) for style, path in symbol_paths.items()}
-    classic_fonts = {style: TTFont(path) for style, path in classic_paths.items()}
     symbol_names = {style: choose_names(icon_names(font), sample) for style, font in symbol_fonts.items()}
-    classic_names = {style: choose_names(icon_names(font), sample) for style, font in classic_fonts.items()}
 
     if output.resolve() == Path.cwd().resolve():
-        for variant, *_ in VARIANTS:
+        for variant in (*[item[0] for item in VARIANTS], "two-tone"):
             shutil.rmtree(output / variant, ignore_errors=True)
         shutil.rmtree(output / "fonts", ignore_errors=True)
         for filename in ("symbols.json", "variants.json", "weight.json", "metadata.json"):
             (output / filename).unlink(missing_ok=True)
     elif output.exists():
         shutil.rmtree(output)
-    output.mkdir(parents=True)
+    output.mkdir(parents=True, exist_ok=True)
     metadata: dict = {
         "source": SOURCE_URL,
         "sourceCommit": commit,
@@ -244,47 +205,31 @@ def build(upstream: Path, output: Path, commit: str, sample: int | None, no_font
             variable.flavor = "woff"
             variable.save(directory / "material-symbols-variable.woff")
 
-    for variant, symbol_style, fill, classic_style in VARIANTS:
-        preferred = symbol_names[symbol_style] if symbol_style else {}
-        fallback = classic_names[classic_style] if classic_style else {}
-        names = dict(preferred)
-        names.update({name: value for name, value in fallback.items() if name not in names})
+    for variant, symbol_style, fill in VARIANTS:
+        names = symbol_names[symbol_style]
         all_names.update(names)
         for name, (codepoint, _) in names.items():
-            source = "symbols" if name in preferred else "icons"
             metadata["icons"].setdefault(name, {})[variant] = {
-                "source": source,
+                "source": "symbols",
                 "codepoint": f"{codepoint:x}",
-                "weights": list(WEIGHTS) if source == "symbols" else [400],
+                "weights": list(WEIGHTS),
             }
 
-        if symbol_style:
-            for weight in WEIGHTS:
-                print(f"Building {variant}/{weight} ({len(preferred)} Symbols)", flush=True)
-                font = TTFont(symbol_paths[symbol_style])
-                font = instantiateVariableFont(
-                    font,
-                    {"FILL": fill, "GRAD": 0, "opsz": 24, "wght": weight},
-                    inplace=True,
-                )
-                directory = output / variant / str(weight)
-                directory.mkdir(parents=True, exist_ok=True)
-                for name, (_, glyph_name) in preferred.items():
-                    (directory / f"{name}.svg").write_text(svg(font, glyph_name), encoding="utf-8")
-                if not no_fonts:
-                    save_static_fonts(font, output / "fonts" / variant / str(weight), "material-symbols")
-                font.close()
-
-        if fallback:
-            directory = output / variant / "400"
+        for weight in WEIGHTS:
+            print(f"Building {variant}/{weight} ({len(names)} Symbols)", flush=True)
+            font = TTFont(symbol_paths[symbol_style])
+            font = instantiateVariableFont(
+                font,
+                {"FILL": fill, "GRAD": 0, "opsz": 24, "wght": weight},
+                inplace=True,
+            )
+            directory = output / variant / str(weight)
             directory.mkdir(parents=True, exist_ok=True)
-            font = classic_fonts[classic_style]
-            fallback_only = {name: entry for name, entry in fallback.items() if name not in preferred}
-            print(f"Building {variant}/400 ({len(fallback_only)} classic fallbacks)", flush=True)
-            for name, (_, glyph_name) in fallback_only.items():
+            for name, (_, glyph_name) in names.items():
                 (directory / f"{name}.svg").write_text(svg(font, glyph_name), encoding="utf-8")
             if not no_fonts:
-                save_static_fonts(font, output / "fonts" / variant / "400", "material-icons-fallback")
+                save_static_fonts(font, output / "fonts" / variant / str(weight), "material-symbols")
+            font.close()
 
     for filename, values in (
         ("symbols.json", sorted(all_names)),
@@ -294,7 +239,7 @@ def build(upstream: Path, output: Path, commit: str, sample: int | None, no_font
         (output / filename).write_text(json.dumps(values, indent=2) + "\n", encoding="utf-8")
     metadata["icons"] = dict(sorted(metadata["icons"].items()))
     (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
-    for font in (*symbol_fonts.values(), *classic_fonts.values()):
+    for font in symbol_fonts.values():
         font.close()
     print(f"Built {len(all_names)} unique names across {len(VARIANTS)} variants", flush=True)
 
