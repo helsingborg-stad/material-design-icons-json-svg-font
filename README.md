@@ -117,13 +117,13 @@ The builder uses only the source Symbols font binaries. It does not use upstream
 
 ## Automatic releases
 
-The [sync workflow](.github/workflows/sync.yml) checks upstream `master` daily and can be run manually. It compares a hash of the source font binaries with the last package. When they change, it rebuilds the generated files, commits them, increments the patch version, tags the commit, publishes npm, registers or updates Packagist, and creates a GitHub release. Committed package changes also trigger a release on the next run. The first release is `1.0.0`. Package format changes should be versioned manually as minor or major releases before the next sync; automatic source updates remain patch releases.
+The [sync workflow](.github/workflows/sync.yml) checks upstream `master` daily and can be run manually. It compares a hash of the source font binaries with the last package. When they change, it rebuilds the generated files, commits them, increments the patch version, tags the commit, publishes npm, and creates a GitHub release. Committed package changes also trigger a release on the next run. Packagist reads the Git tags from the already registered repository. The first release is `1.0.0`. Package format changes should be versioned manually as minor or major releases before the next sync; automatic source updates remain patch releases.
 
-Configure these GitHub Actions secrets before the first run:
+### Tokenless registry setup
 
-- `NPM_TOKEN`: npm token with publish access to the `@helsingborg-stad` scope.
-- `PACKAGIST_USERNAME`: Packagist account name.
-- `PACKAGIST_API_TOKEN`: main Packagist API token, needed to register the package on first release.
+In the npm package's **Settings → Trusted publishing**, add a GitHub Actions publisher with organization `helsingborg-stad`, repository `material-design-icons-json-svg-font`, and workflow filename `sync.yml`. Permit direct `npm publish`. The workflow uses GitHub's short-lived OIDC identity (`id-token: write`) and npm 11, so no `NPM_TOKEN` secret or periodic token rotation is needed. The npm package must exist before you can configure its trusted publisher; if it has not been published yet, publish `1.0.0` once manually with npm login and 2FA, then configure trust before running the workflow. See [npm's trusted publishing guide](https://docs.npmjs.com/trusted-publishers/).
+
+The Composer package is already registered on Packagist. Enable its [GitHub hook](https://packagist.org/about#how-to-update-packages) in Packagist for prompt updates after a tag is pushed. Without the hook, Packagist still crawls registered packages periodically; no Packagist credentials are needed in GitHub Actions.
 
 Allow GitHub Actions to write repository contents and create tags. If the default branch is protected, permit the workflow bot to push generated commits, or adapt the release step to use an approved bot identity. If publishing fails after a tag is pushed, run the workflow manually with `retry_publish` to publish that tag again.
 

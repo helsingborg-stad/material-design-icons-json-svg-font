@@ -16,6 +16,7 @@ concurrency:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   sync:
@@ -27,7 +28,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           registry-url: https://registry.npmjs.org
       - uses: actions/setup-python@v5
         with:
@@ -108,25 +109,14 @@ jobs:
 
       - name: Publish to npm
         if: ${{ steps.release.outputs.publish == 'true' || steps.retry.outputs.publish == 'true' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          test -n "$NODE_AUTH_TOKEN" || { echo 'Set the NPM_TOKEN repository secret'; exit 1; }
+          npm install -g 'npm@^11.5.1'
           version="$(node -p 'require("./package.json").version')"
           if npm view "@helsingborg-stad/material-design-icons-json-svg-font@$version" version --json >/dev/null 2>&1; then
             echo "npm version $version already exists"
           else
             npm publish --access public
           fi
-
-      - name: Register or update Composer package on Packagist
-        if: ${{ steps.release.outputs.publish == 'true' || steps.retry.outputs.publish == 'true' }}
-        env:
-          PACKAGIST_USERNAME: ${{ secrets.PACKAGIST_USERNAME }}
-          PACKAGIST_API_TOKEN: ${{ secrets.PACKAGIST_API_TOKEN }}
-        run: |
-          test -n "$PACKAGIST_USERNAME" && test -n "$PACKAGIST_API_TOKEN" || { echo 'Set PACKAGIST_USERNAME and PACKAGIST_API_TOKEN repository secrets'; exit 1; }
-          python scripts/publish_packagist.py
 
       - name: Publish GitHub release
         if: ${{ steps.release.outputs.publish == 'true' || steps.retry.outputs.publish == 'true' }}
