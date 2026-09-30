@@ -7,6 +7,9 @@
     "type": "git",
     "url": "git+https://github.com/helsingborg-stad/material-design-icons-json-svg-font.git"
   },
+  "bin": {
+    "material-symbols-prune": "bin/prune.js"
+  },
   "files": [
     "symbols.json",
     "variants.json",
@@ -21,7 +24,9 @@
     "fonts/",
     "LICENSE",
     "NOTICE",
-    "README.md"
+    "README.md",
+    "src/",
+    "bin/"
   ],
   "publishConfig": {
     "access": "public"

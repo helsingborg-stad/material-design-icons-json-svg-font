@@ -49,6 +49,58 @@ composer require helsingborg-stad/material-design-icons-json-svg-font
 
 The files are available at `vendor/helsingborg-stad/material-design-icons-json-svg-font/`.
 
+## Keep only the assets your project uses (Composer)
+
+Like the [AWS SDK for PHP's Composer pruning hook](https://github.com/aws/aws-sdk-php/blob/master/src/Script/Composer/README.md), this package offers an opt-in `pre-autoload-dump` script. Add this to your **project's** `composer.json`:
+
+```json
+{
+  "scripts": {
+    "pre-autoload-dump": "HelsingborgStad\\MaterialSymbols\\Script\\Composer\\Prune::run"
+  },
+  "extra": {
+    "helsingborg-stad/material-design-icons-json-svg-font": {
+      "variants": ["outlined", "filled"],
+      "weights": [400],
+      "formats": ["svg", "woff2"],
+      "symbols": ["home", "search"],
+      "staticFonts": false,
+      "variableFonts": true,
+      "dryRun": true
+    }
+  }
+}
+```
+
+Run `composer install` or `composer dump-autoload` to preview the number of files and bytes that would be removed. Set `dryRun` to `false` (or remove it) and run the command again to prune the installed copy. Omit a selection to keep all its values. Accepted formats are `svg`, `ttf`, `otf`, `woff`, and `woff2`; both font switches default to `true`. An unknown or empty selection fails without deleting files. With no `extra` entry, the hook does nothing.
+
+The `symbols` selection removes unused **SVG files**. Font files retain all glyphs; the script selects whole fonts by variant, weight, format, and static or variable type. A variable font supports every weight, so `weights` applies to SVGs and static fonts only. Selecting a filled variant also keeps its base style's variable font (`outlined` for `filled`, and similarly for rounded and sharp), where you can set `FILL` to `1`.
+
+The root JSON files remain the complete upstream catalog after pruning. Use your project selection to determine which asset paths are still present. Changing the selection to keep more assets requires `composer reinstall helsingborg-stad/material-design-icons-json-svg-font`, then rerunning the hook. The script only changes the installed package under `vendor/`, not this repository or the published package.
+
+### npm projects
+
+Add the same selection to your project's `package.json`, under the npm package name. Run the installed command explicitly after `npm install`:
+
+```json
+{
+  "scripts": {
+    "prune:icons": "material-symbols-prune"
+  },
+  "@helsingborg-stad/material-design-icons-json-svg-font": {
+    "variants": ["outlined", "filled"],
+    "weights": [400],
+    "formats": ["svg", "woff2"],
+    "symbols": ["home", "search"],
+    "staticFonts": false,
+    "variableFonts": true,
+    "dryRun": true
+  }
+}
+```
+
+Run `npm run prune:icons` to preview, then set `dryRun` to `false` and run it again to remove files. The options and behavior match the Composer hook. To restore assets after changing a selection, reinstall the npm package.
+
 ## Build locally
 
 Install Python 3.12+, [FontForge](https://fontforge.org/), and the Python dependencies:

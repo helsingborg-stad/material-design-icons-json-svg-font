@@ -72,6 +72,12 @@ jobs:
           python scripts/verify.py .
           composer validate --strict
 
+      - name: Verify consumer pruning
+        if: ${{ !inputs.retry_publish }}
+        run: |
+          php -d zend.assertions=1 -d assert.exception=1 tests/prune.php
+          node tests/prune.js
+
       - name: Commit and tag new package version
         id: release
         if: ${{ steps.upstream.outputs.changed == 'true' || steps.upstream.outputs.initial == 'true' || steps.upstream.outputs.local_changed == 'true' }}
