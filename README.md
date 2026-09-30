@@ -2,7 +2,7 @@
 
 Generated package of [Google Material Symbols](https://github.com/google/material-design-icons), published as:
 
-- npm: `@helsingborg-stad/material-design-icons-json-svg-font`
+- GitHub Packages (npm): `@helsingborg-stad/material-design-icons-json-svg-font`
 - Composer: `helsingborg-stad/material-design-icons-json-svg-font`
 
 All icon names and Unicode code points come from the Material Symbols variable fonts' OpenType ligatures and character maps. The package does not include classic Material Icons.
@@ -37,9 +37,18 @@ The static `material-symbols` fonts contain the Symbols glyphs for each variant 
 
 ### npm
 
+GitHub Packages requires authentication to install npm packages, including public ones. In your consuming project, add this `.npmrc` and set `GITHUB_PACKAGES_TOKEN` to a GitHub personal access token (classic) with `read:packages`:
+
+```ini
+@helsingborg-stad:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}
+```
+
 ```sh
 npm install @helsingborg-stad/material-design-icons-json-svg-font
 ```
+
+GitHub Actions consumers can use their repository's `GITHUB_TOKEN` instead if that repository has been granted access to the package. See [GitHub's npm registry guide](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry).
 
 ### Composer
 
@@ -117,11 +126,11 @@ The builder uses only the source Symbols font binaries. It does not use upstream
 
 ## Automatic releases
 
-The [sync workflow](.github/workflows/sync.yml) checks upstream `master` daily and can be run manually. It compares a hash of the source font binaries with the last package. When they change, it rebuilds the generated files, commits them, increments the patch version, tags the commit, publishes npm, and creates a GitHub release. Committed package changes also trigger a release on the next run. Packagist reads the Git tags from the already registered repository. The first release is `1.0.0`. Package format changes should be versioned manually as minor or major releases before the next sync; automatic source updates remain patch releases.
+The [sync workflow](.github/workflows/sync.yml) checks upstream `master` daily and can be run manually. It compares a hash of the source font binaries with the last package. When they change, it rebuilds the generated files, commits them, increments the patch version, tags the commit, publishes the npm package to GitHub Packages, and creates a GitHub release. Committed package changes also trigger a release on the next run. Packagist reads the Git tags from the already registered repository. The first release is `1.0.0`. Package format changes should be versioned manually as minor or major releases before the next sync; automatic source updates remain patch releases.
 
-### Tokenless registry setup
+### GitHub Packages and Packagist setup
 
-In the npm package's **Settings → Trusted publishing**, add a GitHub Actions publisher with organization `helsingborg-stad`, repository `material-design-icons-json-svg-font`, and workflow filename `sync.yml`. Permit direct `npm publish`. The workflow uses GitHub's short-lived OIDC identity (`id-token: write`) and npm 11, so no `NPM_TOKEN` secret or periodic token rotation is needed. The npm package must exist before you can configure its trusted publisher; if it has not been published yet, publish `1.0.0` once manually with npm login and 2FA, then configure trust before running the workflow. See [npm's trusted publishing guide](https://docs.npmjs.com/trusted-publishers/).
+The workflow publishes to `https://npm.pkg.github.com` with its automatic `GITHUB_TOKEN` and `packages: write` permission. No npmjs.org account, trusted publisher, or rotating publish secret is needed. The package must be associated with this repository and this repository must have Actions write access to the package. If an existing package was published from another repository, grant this repository access under the package's **Manage Actions access** settings. GitHub Packages defaults new packages to private; set package visibility to public in GitHub if that is the intended audience. GitHub Packages limits each npm version tarball to less than 256 MB; the workflow checks this before tagging a release. See [GitHub's package publishing guide](https://docs.github.com/en/actions/tutorials/publish-packages/publish-nodejs-packages).
 
 The Composer package is already registered on Packagist. Enable its [GitHub hook](https://packagist.org/about#how-to-update-packages) in Packagist for prompt updates after a tag is pushed. Without the hook, Packagist still crawls registered packages periodically; no Packagist credentials are needed in GitHub Actions.
 
