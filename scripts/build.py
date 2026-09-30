@@ -130,16 +130,20 @@ def svg(font: TTFont, glyph_name: str) -> str:
         path = pen.getCommands()
         if not path:
             continue
-        opacity = ""
+        attributes = ""
         if layer:
             color = font["CPAL"].palettes[0][layer.colorID]
             if color.alpha < 255:
-                opacity = f' opacity="{color.alpha / 255:.3f}"'
-        paths.append(f'<path{opacity} d="{path}"/>')
+                attributes = (
+                    f' opacity="{color.alpha / 255:.3f}"'
+                    ' style="fill:var(--icon-color-alt, var(--icon-color, currentColor))"'
+                )
+        paths.append(f'<path{attributes} d="{path}"/>')
     if not paths:
         raise ValueError(f"Glyph {glyph_name} has no outline")
     return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {units} {units}">'
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {units} {units}"'
+        ' fill="currentColor" style="fill:var(--icon-color, currentColor)">'
         + "".join(paths) + "</svg>\n"
     )
 

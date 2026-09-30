@@ -28,7 +28,16 @@ for name, availability in metadata["icons"].items():
         for weight in record["weights"]:
             path = root / variant / str(weight) / f"{name}.svg"
             assert path.is_file(), path
-            assert ET.parse(path).getroot().tag == "{http://www.w3.org/2000/svg}svg"
+            svg = ET.parse(path).getroot()
+            assert svg.tag == "{http://www.w3.org/2000/svg}svg"
+            assert svg.attrib.get("fill") == "currentColor", path
+            assert svg.attrib.get("style") == "fill:var(--icon-color, currentColor)", path
+            if variant == "two-tone":
+                for layer in svg:
+                    if "opacity" in layer.attrib:
+                        assert layer.attrib.get("style") == (
+                            "fill:var(--icon-color-alt, var(--icon-color, currentColor))"
+                        ), path
             svg_count += 1
 
 font_count = 0

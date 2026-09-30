@@ -30,6 +30,8 @@ fonts/outlined/400/material-icons-fallback.*
 
 Variants are `outlined`, `rounded`, `sharp`, `filled`, `rounded-filled`, `sharp-filled`, and `two-tone`. `filled` uses the outlined Symbols font at `FILL=1`; the other filled variants do the same for rounded and sharp. `two-tone` comes from classic Material Icons, including its color layer opacity. SVGs use optical size 24 and grade 0. SVGs and static font files exist only at weights the source supports, so classic-only icons appear at weight 400. Use `metadata.json` to check availability rather than assuming every name is present in every directory.
 
+SVGs use `currentColor` by default. Define `--icon-color` on an SVG or an ancestor to override it. Two-tone SVGs also accept `--icon-color-alt` for the lighter layer; when that variable is absent, the lighter layer uses `--icon-color` if set, then `currentColor`. The lighter layer retains the opacity encoded in Google's font.
+
 The variable fonts retain all upstream axes. They are stored once per Symbols style, under `fonts/outlined`, `fonts/rounded`, and `fonts/sharp`. To display filled icons with a variable font, set `FILL` to `1`.
 
 The static `material-symbols` fonts contain Symbols glyphs. The `material-icons-fallback` fonts contain the classic font for the matching style. When using font files, load the fallback font separately for missing classic icons. The SVG directories already apply the fallback choice per icon.
@@ -64,7 +66,7 @@ The builder uses the source font binaries. It does not use upstream `.codepoints
 
 ## Automatic releases
 
-The [sync workflow](.github/workflows/sync.yml) checks upstream `master` daily and can be run manually. It compares a hash of the source font binaries with the last package. When they change, it rebuilds the generated files, commits them, increments the patch version, tags the commit, publishes npm, registers or updates Packagist, and creates a GitHub release. The first release is `1.0.0`. Package format changes should be versioned manually as minor or major releases before the next sync; automatic source updates remain patch releases.
+The [sync workflow](.github/workflows/sync.yml) checks upstream `master` daily and can be run manually. It compares a hash of the source font binaries with the last package. When they change, it rebuilds the generated files, commits them, increments the patch version, tags the commit, publishes npm, registers or updates Packagist, and creates a GitHub release. Committed package changes also trigger a release on the next run. The first release is `1.0.0`. Package format changes should be versioned manually as minor or major releases before the next sync; automatic source updates remain patch releases.
 
 Configure these GitHub Actions secrets before the first run:
 

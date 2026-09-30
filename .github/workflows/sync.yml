@@ -53,6 +53,11 @@ jobs:
         run: |
           if ! git tag -l 'v[0-9]*' | grep -q .; then
             echo 'initial=true' >> "$GITHUB_OUTPUT"
+          else
+            latest_tag="$(git tag -l 'v[0-9]*' --sort=-version:refname | head -1)"
+            if [ "$(git rev-parse HEAD)" != "$(git rev-parse "$latest_tag")" ]; then
+              echo 'local_changed=true' >> "$GITHUB_OUTPUT"
+            fi
           fi
           if python scripts/check_upstream.py upstream metadata.json; then
             echo 'changed=true' >> "$GITHUB_OUTPUT"
@@ -69,14 +74,16 @@ jobs:
 
       - name: Commit and tag new package version
         id: release
-        if: ${{ steps.upstream.outputs.changed == 'true' || steps.upstream.outputs.initial == 'true' }}
+        if: ${{ steps.upstream.outputs.changed == 'true' || steps.upstream.outputs.initial == 'true' || steps.upstream.outputs.local_changed == 'true' }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           version="$(python scripts/bump_version.py)"
-          if [ "${{ steps.upstream.outputs.changed }}" = 'true' ]; then
+          if [ "${{ steps.upstream.outputs.changed }}" = 'true' ] || [ "${{ steps.upstream.outputs.local_changed }}" = 'true' ]; then
             git add -A package.json symbols.json variants.json weight.json metadata.json outlined rounded sharp filled rounded-filled sharp-filled two-tone fonts
-            git commit -m "Sync Google Material fonts ($version)"
+            if ! git diff --cached --quiet; then
+              git commit -m "Release material icon package ($version)"
+            fi
           fi
           git tag "v$version"
           git push --atomic origin HEAD:main "v$version"
