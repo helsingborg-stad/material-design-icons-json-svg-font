@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+/upstream/
+/node_modules/
+*.tgz
+.DS_Store

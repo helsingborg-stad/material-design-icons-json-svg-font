@@ -1,0 +1,30 @@
+{
+  "name": "@helsingborg-stad/material-design-icons-json-svg-font",
+  "version": "1.0.0",
+  "description": "Material Symbols and Material Icons extracted from Google's fonts as SVG, JSON, and fonts",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helsingborg-stad/material-design-icons-json-svg-font.git"
+  },
+  "files": [
+    "symbols.json",
+    "variants.json",
+    "weight.json",
+    "metadata.json",
+    "outlined/",
+    "rounded/",
+    "sharp/",
+    "filled/",
+    "rounded-filled/",
+    "sharp-filled/",
+    "two-tone/",
+    "fonts/",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
