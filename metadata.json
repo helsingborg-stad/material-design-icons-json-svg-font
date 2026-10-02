@@ -1,7 +1,7 @@
 {
   "source": "https://github.com/google/material-design-icons",
-  "sourceCommit": "bd8cb85bd4bad964fe6918f79665bb40c3a8efef",
-  "sourceFontsSha256": "a457965e40ed16cc05c0143f09d22a195f73eaaf28ad2a660d289d1c836e9d6e",
+  "sourceCommit": "737e3324305806514d7909874fa1818ae1808232",
+  "sourceFontsSha256": "ed694117c0ce79b25934cea8978ac89ea2f8140c8a140576932eb58287dad8bf",
   "license": "Apache-2.0",
   "axes": {
     "outlined": {
