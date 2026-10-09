@@ -1,7 +1,7 @@
 {
   "source": "https://github.com/google/material-design-icons",
-  "sourceCommit": "737e3324305806514d7909874fa1818ae1808232",
-  "sourceFontsSha256": "ed694117c0ce79b25934cea8978ac89ea2f8140c8a140576932eb58287dad8bf",
+  "sourceCommit": "49d4db35df873165d6bd6ba09b063c7dafbac2f4",
+  "sourceFontsSha256": "a3a8266273195d666e57bee1cfe1aa518da98af73544ac4c55de56f04ead8ab5",
   "license": "Apache-2.0",
   "axes": {
     "outlined": {
@@ -157996,86 +157996,6 @@
         ]
       }
     },
-    "import_spark": {
-      "outlined": {
-        "source": "symbols",
-        "codepoint": "ffea9",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      },
-      "rounded": {
-        "source": "symbols",
-        "codepoint": "ffea9",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      },
-      "sharp": {
-        "source": "symbols",
-        "codepoint": "ffea9",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      },
-      "filled": {
-        "source": "symbols",
-        "codepoint": "ffea9",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      },
-      "rounded-filled": {
-        "source": "symbols",
-        "codepoint": "ffea9",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      },
-      "sharp-filled": {
-        "source": "symbols",
-        "codepoint": "ffea9",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      }
-    },
     "important_devices": {
       "outlined": {
         "source": "symbols",
@@ -179756,6 +179676,86 @@
         ]
       }
     },
+    "looks_0": {
+      "outlined": {
+        "source": "symbols",
+        "codepoint": "ffe97",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "rounded": {
+        "source": "symbols",
+        "codepoint": "ffe97",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "sharp": {
+        "source": "symbols",
+        "codepoint": "ffe97",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "filled": {
+        "source": "symbols",
+        "codepoint": "ffe97",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "rounded-filled": {
+        "source": "symbols",
+        "codepoint": "ffe97",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "sharp-filled": {
+        "source": "symbols",
+        "codepoint": "ffe97",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      }
+    },
     "looks_3": {
       "outlined": {
         "source": "symbols",
@@ -180065,6 +180065,246 @@
       "sharp-filled": {
         "source": "symbols",
         "codepoint": "e3ff",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      }
+    },
+    "looks_7": {
+      "outlined": {
+        "source": "symbols",
+        "codepoint": "ffe9a",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "rounded": {
+        "source": "symbols",
+        "codepoint": "ffe9a",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "sharp": {
+        "source": "symbols",
+        "codepoint": "ffe9a",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "filled": {
+        "source": "symbols",
+        "codepoint": "ffe9a",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "rounded-filled": {
+        "source": "symbols",
+        "codepoint": "ffe9a",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "sharp-filled": {
+        "source": "symbols",
+        "codepoint": "ffe9a",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      }
+    },
+    "looks_8": {
+      "outlined": {
+        "source": "symbols",
+        "codepoint": "ffe99",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "rounded": {
+        "source": "symbols",
+        "codepoint": "ffe99",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "sharp": {
+        "source": "symbols",
+        "codepoint": "ffe99",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "filled": {
+        "source": "symbols",
+        "codepoint": "ffe99",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "rounded-filled": {
+        "source": "symbols",
+        "codepoint": "ffe99",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "sharp-filled": {
+        "source": "symbols",
+        "codepoint": "ffe99",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      }
+    },
+    "looks_9": {
+      "outlined": {
+        "source": "symbols",
+        "codepoint": "ffe98",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "rounded": {
+        "source": "symbols",
+        "codepoint": "ffe98",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "sharp": {
+        "source": "symbols",
+        "codepoint": "ffe98",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "filled": {
+        "source": "symbols",
+        "codepoint": "ffe98",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "rounded-filled": {
+        "source": "symbols",
+        "codepoint": "ffe98",
+        "weights": [
+          100,
+          200,
+          300,
+          400,
+          500,
+          600,
+          700
+        ]
+      },
+      "sharp-filled": {
+        "source": "symbols",
+        "codepoint": "ffe98",
         "weights": [
           100,
           200,
@@ -184705,86 +184945,6 @@
       "sharp-filled": {
         "source": "symbols",
         "codepoint": "f554",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      }
-    },
-    "markdown_spark": {
-      "outlined": {
-        "source": "symbols",
-        "codepoint": "ffea8",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      },
-      "rounded": {
-        "source": "symbols",
-        "codepoint": "ffea8",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      },
-      "sharp": {
-        "source": "symbols",
-        "codepoint": "ffea8",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      },
-      "filled": {
-        "source": "symbols",
-        "codepoint": "ffea8",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      },
-      "rounded-filled": {
-        "source": "symbols",
-        "codepoint": "ffea8",
-        "weights": [
-          100,
-          200,
-          300,
-          400,
-          500,
-          600,
-          700
-        ]
-      },
-      "sharp-filled": {
-        "source": "symbols",
-        "codepoint": "ffea8",
         "weights": [
           100,
           200,
